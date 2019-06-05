@@ -1,0 +1,13 @@
+flask
+gunicorn
+h5py
+imutils
+Jinja2
+Keras
+numpy
+opencv-python
+Pillow
+scipy
+tensorflow
+Werkzeug
+wheel

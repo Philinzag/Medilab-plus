@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Intellegence Skin Disease Detecting System</title>
+  <meta name="keywords" content="A system for detecting skin diseases">
+
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Candal">
+  <link rel="stylesheet" href="{{url_for('.static', filename='css/font-awesome.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap.min.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='css/style.css')}}">
+
+ <!-- <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet"> -->
+</head>
+
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+  <!--banner-->
+  <section id="banner" class="banner">
+    <div class="bg-color">
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+          <div class="col-md-12">
+            <div class="navbar-header">
+        
+              <a class="navbar-brand" href="#"><img src="../static/img/logo.png" class="img-responsive" style="width: 140px; margin-top: -16px;"></a>
+            </div>
+          
+          </div>
+        </div>
+      </nav>
+      <div class="container">
+        <div class="row">
+          <div class="banner-info">
+            <div class="banner-logo text-center">
+              <img src="../static/img/logo.png" class="img-responsive">
+            </div>
+            <div class="banner-text text-center">
+              <h1 class="white">Intellegence Skin Disease Detecting System</h1>
+              <p><h3 class="white">Upload an Image For processing "Acne vulgaris / Atopic Dermatitis / scabies"</h3></p>
+
+              <form action="" method=post enctype=multipart/form-data>
+              <span class="btn btn-appoint">
+                <input type="file" name=file required accept="image/x-jpg,image/jpeg" />
+            </span>
+            <label class="btn btn-appoint">
+                Upload <input type="submit" class="btn" style="display: none; ">
+            </label>
+          </br>   </br>
+            <div class="alert-warning">
+        
+              <strong>1. Click Choose file to search and upload image file. <br/>
+                2.Click on upload to process the image for the disease type </strong> 
+            </div>
+          </form>
+
+            </div>
+            <br/>            
+            <table class="table">
+              <thead class="grey lighten-2">
+                 <tr>
+                  <th scope="col" width="35%">Image</th>
+                  <th scope="col" width="15%">Name of Disease</th>
+                  <th scope="col" width="25%">Symptopms</th>
+                  <th scope="col" width="25%">Treatment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr scope=>
+        {% block content %}{% endblock %}
+      </tr>
+              
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--/ banner-->
+ 
+  <!--footer-->
+  <footer id="footer">
+    
+    <div class="footer-line">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            © Copyright All Rights Reserved
+            <div class="credits">
+              Nti et al 2019 </a>
+            </div>
+          </div>
+        </div>
+      </div>
+   
+  </footer>
+  <!--/ footer-->
+  <link rel="stylesheet" href="{{url_for('.static', filename='js/jquery.min.js')}}">
+  <link rel="stylesheet" href="{{url_for('.static', filename='js/jquery.easing.min.js')}}">
+  <link rel="stylesheet" href="{{url_for('.static', filename='js/bootstrap.min.js')}}">
+  <link rel="stylesheet" href="{{url_for('.static', filename='js/custom.js')}}">
+</body>
+
+</html>
