@@ -1,7 +1,8 @@
 
 import os
 import numpy as np
-from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tensorflow.keras.utils import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, load_model
 
 img_width, img_height = 150, 150
