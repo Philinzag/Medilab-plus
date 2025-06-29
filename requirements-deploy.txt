@@ -1,13 +1,14 @@
 # Deployment-ready requirements for Render
 # Updated for better security and compatibility while maintaining 2019 code compatibility
+# Version constraints to resolve dependency conflicts
 
 flask==2.2.5
 gunicorn==21.2.0
 h5py==3.8.0
 imutils==0.5.4
 Jinja2==3.1.2
-numpy==1.24.3
-opencv-python==4.8.1.78
+numpy==1.23.5
+opencv-python==4.8.0.76
 Pillow==9.5.0
 scipy==1.10.1
 tensorflow==2.12.0
