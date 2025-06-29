@@ -9,9 +9,14 @@ echo "Creating necessary directories..."
 mkdir -p uploads
 mkdir -p models
 
+echo "Downloading trained model from Google Drive..."
+# Download the trained model (171MB)
+MODEL_URL="https://drive.google.com/uc?id=1wInTfPdAAXxCH5YD_f9WiV4dXJsSKyUI&export=download"
+curl -L -o models/model.h5 "$MODEL_URL"
+
 echo "Checking for trained model..."
 if [ ! -f "./models/model.h5" ]; then
-    echo "⚠️  No trained model found. Creating dummy model for deployment..."
+    echo "⚠️  Model download failed. Creating dummy model for deployment..."
     python -c "
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
@@ -33,7 +38,8 @@ model.save('./models/model.h5')
 print('✅ Dummy model created for deployment')
 "
 else
-    echo "✅ Trained model found!"
+    echo "✅ Trained model downloaded successfully!"
+    ls -lh ./models/model.h5
 fi
 
 echo "Build completed successfully!"
