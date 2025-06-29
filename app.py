@@ -7,7 +7,8 @@ load_dotenv()
 
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tensorflow.keras.utils import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, load_model
 import numpy as np
 import argparse
@@ -21,7 +22,6 @@ img_width, img_height = 150, 150
 
 # Use environment variables for paths with fallbacks
 model_path = os.getenv('MODEL_PATH', './models/model.h5')
-model_weights_path = os.getenv('MODEL_WEIGHTS_PATH', './models/weights.h5')
 
 # Create uploads directory if it doesn't exist
 UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
@@ -146,13 +146,11 @@ def uploaded_file(filename):
                                filename)
 
 
-from werkzeug import SharedDataMiddleware
+# SharedDataMiddleware has been removed in newer Werkzeug versions
+# Flask's send_from_directory handles static file serving
 
 app.add_url_rule('/uploads/<filename>', 'uploaded_file',
                  build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-    '/uploads': app.config['UPLOAD_FOLDER']
-})
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 3000))
