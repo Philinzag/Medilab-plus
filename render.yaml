@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: medilab-plus
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn app:app"
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.16
+      - key: FLASK_ENV
+        value: production
+    disk:
+      name: medilab-data
+      mountPath: /opt/render/project/src/uploads
+      sizeGB: 1

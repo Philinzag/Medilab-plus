@@ -1,8 +1,12 @@
 # Usage: python app.py
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 from flask import Flask, render_template, request, redirect, url_for
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from keras.models import Sequential, load_model
 import numpy as np
@@ -14,12 +18,22 @@ import uuid
 import base64
 
 img_width, img_height = 150, 150
-model_path = './models/model.h5'
-model_weights_path = './models/weights.h5'
-model = load_model(model_path)
-# model.load_weights(model_weights_path)
 
-UPLOAD_FOLDER = 'uploads'
+# Use environment variables for paths with fallbacks
+model_path = os.getenv('MODEL_PATH', './models/model.h5')
+model_weights_path = os.getenv('MODEL_WEIGHTS_PATH', './models/weights.h5')
+
+# Create uploads directory if it doesn't exist
+UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Load model with error handling
+try:
+    model = load_model(model_path)
+    print(f"Model loaded successfully from {model_path}")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    model = None
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
 
@@ -28,20 +42,27 @@ def get_as_base64(url):
 
 
 def predict(file):
-    x = load_img(file, target_size=(img_width, img_height))
-    x = img_to_array(x)
-    x = np.expand_dims(x, axis=0)
-    array = model.predict(x)
+    if model is None:
+        return -1  # Error code for missing model
+    
+    try:
+        x = load_img(file, target_size=(img_width, img_height))
+        x = img_to_array(x)
+        x = np.expand_dims(x, axis=0)
+        array = model.predict(x)
 
-    result = array[0]
-    answer = np.argmax(result)
-    if answer == 0:
-        print("Label: Acne vulgaris")
-    elif answer == 1:
-        print("Label: Atopic Dermatitis")
-    elif answer == 2:
-        print("Label: Scabies ")
-    return answer
+        result = array[0]
+        answer = np.argmax(result)
+        if answer == 0:
+            print("Label: Acne vulgaris")
+        elif answer == 1:
+            print("Label: Atopic Dermatitis")
+        elif answer == 2:
+            print("Label: Scabies ")
+        return answer
+    except Exception as e:
+        print(f"Prediction error: {e}")
+        return -1
 
 
 def my_random_string(string_length=10):
@@ -80,6 +101,14 @@ def upload_file():
             file.save(file_path)
 
             result = predict(file_path)
+            
+            # Handle prediction errors
+            if result == -1:
+                return render_template('template.html', 
+                                     label='Error', 
+                                     sym='Unable to process image. Please try again.',
+                                     treat='Please upload a clear image and try again.',
+                                     imagesource='../uploads/skin-bn.jpg')
         
             if result == 0:
                 label = 'Acne vulgaris'
@@ -126,5 +155,8 @@ app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
 })
 
 if __name__ == "__main__":
-    app.debug = False
-    app.run(host='127.0.0.1', port=3000)
+    port = int(os.getenv('PORT', 3000))
+    debug_mode = os.getenv('FLASK_ENV') != 'production'
+    
+    app.debug = debug_mode
+    app.run(host='0.0.0.0', port=port)
