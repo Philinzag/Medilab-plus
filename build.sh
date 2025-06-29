@@ -9,4 +9,31 @@ echo "Creating necessary directories..."
 mkdir -p uploads
 mkdir -p models
 
+echo "Checking for trained model..."
+if [ ! -f "./models/model.h5" ]; then
+    echo "⚠️  No trained model found. Creating dummy model for deployment..."
+    python -c "
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+
+model = Sequential([
+    Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+    MaxPooling2D(2, 2),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D(2, 2),
+    Flatten(),
+    Dropout(0.5),
+    Dense(512, activation='relu'),
+    Dense(3, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.save('./models/model.h5')
+print('✅ Dummy model created for deployment')
+"
+else
+    echo "✅ Trained model found!"
+fi
+
 echo "Build completed successfully!"
