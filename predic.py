@@ -1,8 +1,8 @@
 
 import os
 import numpy as np
-from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
-from keras.models import Sequential, load_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tensorflow.keras.models import Sequential, load_model
 
 img_width, img_height = 150, 150
 model_path = './models/model.h5'

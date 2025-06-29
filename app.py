@@ -7,8 +7,8 @@ load_dotenv()
 
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
-from keras.models import Sequential, load_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tensorflow.keras.models import Sequential, load_model
 import numpy as np
 import argparse
 import imutils
