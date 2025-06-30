@@ -29,11 +29,32 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Load model with error handling
 try:
-    model = load_model(model_path)
-    print(f"Model loaded successfully from {model_path}")
+    # Try loading with compile=False to avoid optimizer issues
+    model = load_model(model_path, compile=False)
+    
+    # Recompile the model with current TensorFlow version
+    model.compile(
+        optimizer='adam',
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    print(f"Model loaded and recompiled successfully from {model_path}")
 except Exception as e:
     print(f"Error loading model: {e}")
-    model = None
+    print("Trying alternative loading method...")
+    try:
+        # Alternative: Try loading architecture and weights separately
+        import tensorflow as tf
+        model = tf.keras.models.load_model(model_path, compile=False)
+        model.compile(
+            optimizer='adam',
+            loss='categorical_crossentropy', 
+            metrics=['accuracy']
+        )
+        print("Model loaded with alternative method")
+    except Exception as e2:
+        print(f"Alternative loading failed: {e2}")
+        model = None
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
 
