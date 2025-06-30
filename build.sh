@@ -10,9 +10,24 @@ mkdir -p uploads
 mkdir -p models
 
 echo "Downloading trained model from Google Drive..."
-# Download the trained model (171MB)
-MODEL_URL="https://drive.google.com/uc?id=1wInTfPdAAXxCH5YD_f9WiV4dXJsSKyUI&export=download"
+# Use direct download URLs with confirmation tokens
+echo "Downloading model.h5 from Google Drive..."
+MODEL_URL="https://drive.usercontent.google.com/download?id=1wInTfPdAAXxCH5YD_f9WiV4dXJsSKyUI&export=download&confirm=t&uuid=ff69053e-3d03-4e7a-8dc9-c18821c32c27"
 curl -L -o models/model.h5 "$MODEL_URL"
+
+# Verify the download by checking file size (should be ~171MB)
+if [ -f "./models/model.h5" ]; then
+    FILE_SIZE=$(stat -c%s "./models/model.h5")
+    FILE_SIZE_MB=$((FILE_SIZE / 1024 / 1024))
+    echo "Downloaded file size: ${FILE_SIZE_MB}MB"
+    
+    if [ "$FILE_SIZE_MB" -lt 50 ]; then
+        echo "⚠️  Downloaded file too small (${FILE_SIZE_MB}MB), likely not the model file"
+        rm ./models/model.h5
+    else
+        echo "✅ Model file appears to be correct size!"
+    fi
+fi
 
 echo "Checking for trained model..."
 if [ ! -f "./models/model.h5" ]; then
