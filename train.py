@@ -1,12 +1,12 @@
 
 import sys
 import os
-from keras.preprocessing.image import ImageDataGenerator
-from keras import optimizers
-from keras.models import Sequential
-from keras.layers import Dropout, Flatten, Dense, Activation
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-from keras import callbacks
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras import optimizers
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dropout, Flatten, Dense, Activation
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras import callbacks
 
 DEV = False
 argvs = sys.argv
@@ -39,13 +39,13 @@ classes_num = 3
 lr = 0.0004
 
 model = Sequential()
-model.add(Convolution2D(nb_filters1, conv1_size, conv1_size, border_mode ="same", input_shape=(img_width, img_height, 3)))
+model.add(Conv2D(nb_filters1, (conv1_size, conv1_size), padding="same", input_shape=(img_width, img_height, 3)))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
 
-model.add(Convolution2D(nb_filters2, conv2_size, conv2_size, border_mode ="same"))
+model.add(Conv2D(nb_filters2, (conv2_size, conv2_size), padding="same"))
 model.add(Activation("relu"))
-model.add(MaxPooling2D(pool_size=(pool_size, pool_size), dim_ordering='th'))
+model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
 
 model.add(Flatten())
 model.add(Dense(256))
@@ -54,7 +54,7 @@ model.add(Dropout(0.5))
 model.add(Dense(classes_num, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.RMSprop(lr=lr),
+              optimizer=optimizers.RMSprop(learning_rate=lr),
               metrics=['accuracy'])
 
 train_datagen = ImageDataGenerator(
@@ -86,9 +86,9 @@ tb_cb = callbacks.TensorBoard(log_dir=log_dir, histogram_freq=0)
 cbks = [tb_cb]
 
 
-model.fit_generator(
+model.fit(
     train_generator,
-    samples_per_epoch=samples_per_epoch,
+    steps_per_epoch=samples_per_epoch // batch_size,
     epochs=epochs,
     validation_data=validation_generator,
     callbacks=cbks,
@@ -98,4 +98,9 @@ target_dir = './models/'
 if not os.path.exists(target_dir):
   os.mkdir(target_dir)
 model.save('./models/model.h5')
-model.save_weights('./models/weights.h5')
+model.save_weights('./models/model.weights.h5')
+
+print("\n✅ Training completed!")
+print("✅ Model saved to ./models/model.h5") 
+print("✅ Weights saved to ./models/model.weights.h5")
+print("\n🚀 Your model is ready for deployment!")

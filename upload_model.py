@@ -12,6 +12,25 @@ def get_file_size(filepath):
     size_mb = size_bytes / (1024 * 1024)
     return size_mb
 
+def convert_drive_link(folder_link):
+    """Convert Google Drive folder link to instructions for getting file IDs"""
+    print("\n🔗 Converting Google Drive Link:")
+    print(f"Folder Link: {folder_link}")
+    print("\n📋 To get direct download links:")
+    print("1. Open your folder link in browser")
+    print("2. Right-click on model.h5 file")
+    print("3. Select 'Get Link' or 'Copy Link'")
+    print("4. Make sure it's set to 'Anyone with the link can view'")
+    print("5. Copy the file-specific link (should contain the file ID)")
+    print("6. Extract the FILE_ID from the URL")
+    print("7. Use this format: https://drive.google.com/uc?id=FILE_ID&export=download")
+    
+    # Extract folder ID for reference
+    if "folders/" in folder_link:
+        folder_id = folder_link.split("folders/")[1].split("?")[0]
+        print(f"\n📁 Your folder ID: {folder_id}")
+        print("📝 Next step: Get the individual file ID for model.h5")
+
 if __name__ == "__main__":
     model_file = './models/model.h5'
     weights_file = './models/model.weights.h5'
@@ -39,10 +58,11 @@ if __name__ == "__main__":
     print("3. Update build.sh to download during deployment")
     print("4. This keeps the repo lightweight while enabling deployment")
     
-    print("\n🔗 Google Drive Upload Instructions:")
-    print("1. Go to drive.google.com")
-    print("2. Upload models/model.h5")
-    print("3. Right-click → Share → Get Link")
-    print("4. Change permissions to 'Anyone with the link'")
-    print("5. Copy the file ID from the URL")
-    print("6. Use format: https://drive.google.com/uc?id=FILE_ID&export=download")
+    # Convert the provided Google Drive link
+    folder_link = "https://drive.google.com/drive/folders/1NHPA061HIArXB4rYAQJZK8c3XjPmHq_O?usp=sharing"
+    convert_drive_link(folder_link)
+    
+    print("\n🚀 Once you have the direct download link:")
+    print("1. Update the MODEL_DOWNLOAD_URL in build.sh")
+    print("2. Push changes to GitHub")
+    print("3. Render will automatically redeploy with your trained model!")
