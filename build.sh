@@ -31,26 +31,48 @@ fi
 
 echo "Checking for trained model..."
 if [ ! -f "./models/model.h5" ]; then
-    echo "⚠️  Model download failed. Creating dummy model for deployment..."
+    echo "⚠️  Model download failed. Creating compatible model for deployment..."
     python -c "
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Activation
+from tensorflow.keras import optimizers
 
-model = Sequential([
-    Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
-    MaxPooling2D(2, 2),
-    Conv2D(64, (3, 3), activation='relu'),
-    MaxPooling2D(2, 2),
-    Flatten(),
-    Dropout(0.5),
-    Dense(512, activation='relu'),
-    Dense(3, activation='softmax')
-])
+# Recreate the exact model architecture from train.py
+img_width, img_height = 150, 150
+nb_filters1 = 32
+nb_filters2 = 64
+conv1_size = 3
+conv2_size = 2
+pool_size = 2
+classes_num = 3
+lr = 0.0004
 
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model = Sequential()
+model.add(Conv2D(nb_filters1, (conv1_size, conv1_size), padding='same', input_shape=(img_width, img_height, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
+
+model.add(Conv2D(nb_filters2, (conv2_size, conv2_size), padding='same'))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
+
+model.add(Flatten())
+model.add(Dense(256))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(classes_num, activation='softmax'))
+
+# Compile with modern TensorFlow
+model.compile(
+    loss='categorical_crossentropy',
+    optimizer=optimizers.RMSprop(learning_rate=lr),
+    metrics=['accuracy']
+)
+
 model.save('./models/model.h5')
-print('✅ Dummy model created for deployment')
+print('✅ Compatible model architecture created for deployment')
+print('⚠️  Note: This model has random weights. Upload trained model for real predictions.')
 "
 else
     echo "✅ Trained model downloaded successfully!"
